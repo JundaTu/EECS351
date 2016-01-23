@@ -68,10 +68,8 @@ function main() {
 
   // Start drawing
   var tick = function() {
-   // currentAngle = animate(currentAngle);  // Update the rotation angle
-   
+    currentAngle = animate(currentAngle);  // Update the rotation angle
     draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix);   // Draw the triangle
-    //drawSmall(gl, n, currentSmallAngle, modelMatrix, u_ModelMatrix);
     requestAnimationFrame(tick, canvas);   // Request that the browser ?calls tick
   };
   tick();
@@ -82,6 +80,7 @@ function main() {
 function initVertexBuffers(gl) {
 //==============================================================================
   var vertices = new Float32Array ([
+    //vertices for the middle big star
      0.0,  0.65, 0.0, 1,  // CAREFUL! I made these into 4D points/ vertices: x,y,z,w.
     -0.13,  0.25,   0,   1,
     -0.5,  0.25,   0,   1,
@@ -93,20 +92,21 @@ function initVertexBuffers(gl) {
      0.5,  0.25, 0,   1,
      0.13,  0.25, 0,1,
 
-     // 0.5, 0.4, 0, 1,
-     // 0.37, 0, 0, 1, 
-     // 0, 0, 0, 1,
-     // 0.3, -0.25, 0, 1,
-     // 0.15, -0.65, 0, 1,
-     // 0.5, -0.4, 0, 1, 
-     // 0.85, -0.65, 0, 1,
-     // 0.7, -0.25, 0, 1,
-     // 1, 0, 0, 1,
-     // 0.63, 0, 0, 1,
+     //vertices for the small star
+     0.5, 0.4, 0, 1,
+     0.37, 0, 0, 1, 
+     0, 0, 0, 1,
+     0.3, -0.25, 0, 1,
+     0.15, -0.65, 0, 1,
+     0.5, -0.4, 0, 1, 
+     0.85, -0.65, 0, 1,
+     0.7, -0.25, 0, 1,
+     1, 0, 0, 1,
+     0.63, 0, 0, 1,
 
 
   ]);
-  var n = 10;   // The number of vertices
+  var n = 20;   // The number of vertices
 
   // Create a buffer object
   var vertexBuffer = gl.createBuffer();
@@ -145,126 +145,64 @@ function initVertexBuffers(gl) {
   return n;
 }
 
-/*function drawSmall(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
-//==============================================================================
-  // Clear <canvas>
-  gl.clear(gl.COLOR_BUFFER_BIT);
-
-  modelMatrix.translate(0.06, 0.72, 0);       // Make new drawing axes that
-                // we moved upwards (+y) measured in prev. drawing axes, and
-                // moved rightwards (+x) by half the width of the box we just drew.
-  modelMatrix.scale(0.2,0.2,0.2);   
-  modelMatrix.rotate(currentAngle, 0, 1, 0);
-
-// DRAW BOX: Use this matrix to transform & draw our VBO's contents:
-  gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
-  gl.drawArrays(gl.LINE_LOOP, 0, n);
-
-}*/
 function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
 //==============================================================================
   // Clear <canvas>
   gl.clear(gl.COLOR_BUFFER_BIT);
 
-  // Build our Robot Arm by successively moving our drawing axes
-
- // -------big star---------------
-  modelMatrix.setTranslate(0,0.1, 0.0);  // 'set' means DISCARD old matrix,
-  						// (drawing axes centered in CVV), and then make new
-  						// drawing axes moved to the lower-left corner of CVV. 
-  modelMatrix.scale(0.7,0.7,0.7);
-  
-  modelMatrix.rotate(currentAngle, 0, 0, 1);  // Make new drawing axes that
-  						// that spin around z axis (0,0,1) of the previous 
-  						// drawing axes, using the same origin.
-  //modelMatrix.rotate(3*currentAngle, 0,1,0);  // SPIN ON Y AXIS!!!
-	// modelMatrix.translate(0.5, 0,0);						// Move box so that we pivot
-							// around the MIDDLE of it's lower edge, and not the left corner.
-
-  // DRAW BOX:  Use this matrix to transform & draw our VBo's contents:
-  		// Pass our current matrix to the vertex shaders:
-  gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
-  		// Draw the rectangle held in the VBO we created in initVertexBuffers().
-  gl.drawArrays(gl.LINE_LOOP, 0, n);
-  //gl.drawArrays(gl.POINTS, 0, n);
+  //------- Starly girl with her pony tail------------------------
+  // -------big star---------------
+  modelMatrix.setTranslate(0,0.1, 0.0);  
+  //modelMatrix.scale(0.7,0.7,0.7); 
+  //modelMatrix.rotate(40, 0, 1,0); 
+  modelMatrix.rotate(currentAngle, 0, 1, 0);  
+  gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);		
+  gl.drawArrays(gl.LINE_LOOP, 0, 10);
   pushMatrix(modelMatrix);
-  pushMatrix(modelMatrix);
-  pushMatrix(modelMatrix);
-  pushMatrix(modelMatrix);
-  pushMatrix(modelMatrix); 
 
-
- //-------1nd  small star----------------
-  modelMatrix.translate(0.1, 0.6, 0); 			// Make new drawng axes that
-  						// we moved upwards (+y) measured in prev. drawing axes, and
-  						// moved rightwards (+x) by half the width of the box we just drew.
-  modelMatrix.scale(0.2,0.2,0.2);				// Make new drawing axes that
-  						// are smaller that the previous drawing axes by 0.6.
-  //modelMatrix.rotate(30, 0,0,1);	// Make new drawing axes that
-  						// spin around Z axis (0,0,1) of the previous drawing 
-  						// axes, using the same origin.
-  //modelMatrix.translate(-0.5, 0, 0);			// Make new drawing axes that
-  						// move sideways by half the width of our rectangle model
-  						// (REMEMBER! modelMatrix.scale() DIDN'T change the 
-  						// the vertices of our model stored in our VBO; instead
-  						// we changed the DRAWING AXES used to draw it. Thus
-  						// we translate by the 0.1, not 0.1*0.6.)
-  // DRAW BOX: Use this matrix to transform & draw our VBO's contents:
-  gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
-  gl.drawArrays(gl.LINE_LOOP, 0, n);
- 
-/*//-------2nd  small star----------------
   modelMatrix = popMatrix();
-	//modelMatrix.translate(-0.126, 0.0, 0.0);	// Make new drawing axes at 
-	modelMatrix.rotate(100, 0,0,1);		
-						// make new drawing axes that rotate for lower-jaw
-	modelMatrix.scale(0.2, 0.2, 0.2);		// Make new drawing axes that
-						// have size of just 40% of previous drawing axes,
-						// (Then translate? no need--we already have the box's 
-						//	left corner at the wrist-point; no change needed.)
-	// Draw inner lower jaw segment:				
+  modelMatrix.translate(-0.02, 0,0);
+  gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);    
+  gl.drawArrays(gl.LINE_LOOP, 0, 10);
+
+/*
+ //-------1nd  small star----------------
+  modelMatrix.translate(0, 0.65, 0); 			
+  modelMatrix.scale(0.2,0.2,0.2);			
+  modelMatrix.rotate(20, 0,0,1);  
+  modelMatrix.rotate(0.7*currentAngle, 0,0,1);	
+  pushMatrix(modelMatrix);
+  
+  gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
+  gl.drawArrays(gl.LINE_LOOP, 10, 10);
+ 
+//-------2nd  small star----------------
+  modelMatrix = popMatrix();
+	modelMatrix.translate(0.85, -0.65, 0.0);	
+	modelMatrix.scale(0.8, 0.8, 0.8);		
+  modelMatrix.rotate(-10, 0,0,1); 
+  modelMatrix.rotate(0.5*currentAngle, 0,0,1);  
+  pushMatrix(modelMatrix);
   // DRAW BOX: Use this matrix to transform & draw our VBO's contents:
   gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
-  gl.drawArrays(gl.LINE_LOOP, 0, n);
+  gl.drawArrays(gl.LINE_LOOP, 10, 10);
+
 //-------3rd  small star----------------
   modelMatrix = popMatrix();
 	// Now move drawing axes to the centered end of that lower-jaw segment:
-	modelMatrix.translate(0.15, -0.65, 0.0);
-	modelMatrix.rotate(-190.0, 0,0,1);		// make bend in the lower jaw
+	modelMatrix.translate(0.85, -0.65, 0.0);
+	modelMatrix.scale(0.8, 0.8, 0.8);    
+  modelMatrix.rotate(-10, 0,0,1);		// make bend in the lower jaw
 	//modelMatrix.translate(-0.1, 0.0, 0.0);	// re-center the outer segment,
-	modelMatrix.scale(0.2, 0.2, 0.2);
+  modelMatrix.rotate(0.5*currentAngle, 0,0,1);  
 	// Draw outer lower jaw segment:				
   // DRAW BOX: Use this matrix to transform & draw our VBO's contents:
   gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
-  gl.drawArrays(gl.LINE_LOOP, 0, n);
-  
-  
-	
-//-------4th small star----------------
-  modelMatrix = popMatrix();
-  // Now move drawing axes to the centered end of that lower-jaw segment:
-  modelMatrix.translate(0.85, -0.65, 0.0);
-  modelMatrix.rotate(-120.0, 0,0,1);    // make bend in the lower jaw
-  //modelMatrix.translate(-0.1, 0.0, 0.0);  // re-center the outer segment,
-  modelMatrix.scale(0.2, 0.2, 0.2);
-  // Draw outer lower jaw segment:        
-  // DRAW BOX: Use this matrix to transform & draw our VBO's contents:
-  gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
-  gl.drawArrays(gl.LINE_LOOP, 0, n);
-  
+  gl.drawArrays(gl.LINE_LOOP, 10, 10);
 
-//-------3rd  small star----------------
-  modelMatrix = popMatrix();
-  // Now move drawing axes to the centered end of that lower-jaw segment:
-  modelMatrix.translate(1, 0.0, 0.0);
-  modelMatrix.rotate(-45.0, 0,0,1);    // make bend in the lower jaw
-  //modelMatrix.translate(-0.1, 0.0, 0.0);  // re-center the outer segment,
-  modelMatrix.scale(0.2, 0.2, 0.2);
-  // Draw outer lower jaw segment:        
-  // DRAW BOX: Use this matrix to transform & draw our VBO's contents:
-  gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
-  gl.drawArrays(gl.LINE_LOOP, 0, n);*/
-  
+*/
+
+
 }
 
 // Last time that this function was called:  (used for animation timing)
@@ -279,27 +217,10 @@ function animate(angle) {
   
   // Update the current rotation angle (adjusted by the elapsed time)
   //  limit the angle to move smoothly between +20 and -85 degrees:
-  //if(angle >   20.0 && ANGLE_STEP > 0) ANGLE_STEP = -ANGLE_STEP;
-  //if(angle <  -85.0 && ANGLE_STEP < 0) ANGLE_STEP = -ANGLE_STEP;
+  if(angle >   30.0 && ANGLE_STEP > 0) ANGLE_STEP = -ANGLE_STEP;
+  if(angle <  -20.0 && ANGLE_STEP < 0) ANGLE_STEP = -ANGLE_STEP;
   
   var newAngle = angle + ANGLE_STEP / 30.0;
   return newAngle %= 360;
 }
-
-// function animateSmall(angle) {
-//   //==============================================================================
-//   // Calculate the elapsed time
-//   var now = Date.now();
-//   var elapsed = now - g_last;
-//   g_last = now;
-  
-//   //Update the current rotation angle (adjusted by the elapsed time)
-//    //limit the angle to move smoothly between +20 and -85 degrees:
-//   if(angle >   50.0 && ANGLE_STEP > 0) ANGLE_STEP = -ANGLE_STEP;
-//   if(angle <  -85.0 && ANGLE_STEP < 0) ANGLE_STEP = -ANGLE_STEP;
-
-//   var newAngle = angle + ANGLE_STEP / 70.0;
-//   return newAngle %= 360;
-
-// }
 
