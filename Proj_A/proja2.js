@@ -83,12 +83,26 @@ function initVertexBuffers(gl) {
     -0.13,  0.25,   0,   1,
     -0.5,  0.25,   0,   1,
     -0.2,  0.0, 0.0, 1, // new point!  (? What happens if I make w=0 instead of 1.0?)   
-    -0.35, -0.4, 0.0, 1,  //when w = 1, it's a point; when w = 0, it's vector  
-     0.0, -0.15, 0.0, 1,  // new point! 
-     0.35, -0.4, 0.0, 1,  //
      0.2,  0.0, 0.0, 1,   // new point!  (note we need a trailing comma here)    
      0.5,  0.25, 0,   1,
      0.13,  0.25, 0,1,
+
+    0.0,  0.65, 0.0, 1,  // CAREFUL! I made these into 4D points/ vertices: x,y,z,w.
+    0.0,  0.65, -0.1, 1,
+    -0.13,  0.25, 0, 1,
+    -0.13, 0.25, -0.1, 1,
+    
+    -0.5,  0.25,   0,   1,
+    -0.5, 0.25, -0.1, 1,
+    
+    -0.2,  0.0, 0.0, 1, // new point!  (? What happens if I make w=0 instead of 1.0?)   
+    -0.2, 0.0, -0.1, 1,
+     0.2,  0.0, 0.0, 1,   // new point!  (note we need a trailing comma here)    
+     0.2, 0.0, -0.1, 1,
+     0.5,  0.25, 0,   1,
+     0.5, 0.25, -0.1, 1,
+     0.13,  0.25, 0,1,
+     0.13, 0.25, -0.1, 1,
 
      //vertices for the small star
      0.5, 0.4, 0, 1,
@@ -102,21 +116,11 @@ function initVertexBuffers(gl) {
      1, 0, 0, 1,
      0.63, 0, 0, 1,
 
-    0.0,  0.65, 0.0, 1,  // CAREFUL! I made these into 4D points/ vertices: x,y,z,w.
-    0.0,  0.65, -0.1, 1,
-    -0.13,  0.25, 0, 1,
-    -0.13, 0.25, -0.1, 1,
-    // -0.5,  0.25,   0,   1,
-    // -0.2,  0.0, 0.0, 1, // new point!  (? What happens if I make w=0 instead of 1.0?)   
-    // -0.35, -0.4, 0.0, 1,  //when w = 1, it's a point; when w = 0, it's vector  
-    //  0.0, -0.15, 0.0, 1,  // new point! 
-    //  0.35, -0.4, 0.0, 1,  //
-    //  0.2,  0.0, 0.0, 1,   // new point!  (note we need a trailing comma here)    
-    //  0.5,  0.25, 0,   1,
-    //  0.13,  0.25, 0,1,
+    
+    
 
   ]);
-  var n = 22;   // The number of vertices
+  var n = 31;   // The number of vertices
 
   // Create a buffer object
   var vertexBuffer = gl.createBuffer();
@@ -150,24 +154,21 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
   // -------big star---------------
   modelMatrix.setTranslate(0,0.1, 0.0);  
   //modelMatrix.scale(0.7,0.7,0.7); 
-  //modelMatrix.rotate(30, 0, 1,0); 
+  modelMatrix.rotate(30, 0, 1,0); 
   modelMatrix.rotate(currentAngle, 0, 1, 0);  
   gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);		
-  gl.drawArrays(gl.LINE_LOOP, 0, 10);
-  // pushMatrix(modelMatrix);
-  // pushMatrix(modelMatrix);
-  // pushMatrix(modelMatrix);
-  // pushMatrix(modelMatrix);
-  // pushMatrix(modelMatrix);
-  // pushMatrix(modelMatrix);
+  gl.drawArrays(gl.LINE_LOOP, 0, 7);
+  
   //drawSeveralTimes(gl, n, modelMatrix, u_ModelMatrix);
    //layer 2
     modelMatrix.translate(0, 0,0.1);
     gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);    
-    gl.drawArrays(gl.LINE_LOOP, 0, 10);
+    gl.drawArrays(gl.LINE_LOOP, 0, 7);
 
     gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);    
-    gl.drawArrays(gl.LINES, 20, 2);
+    gl.drawArrays(gl.LINES, 7, 14);
+
+
 
 /*
     //layer 3
@@ -183,7 +184,7 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
   //   gl.drawArrays(gl.LINE_LOOP, 0, 10);
   // }
 
-/*
+
  //-------1nd  small star----------------
   modelMatrix.translate(0, 0.65, 0); 			
   modelMatrix.scale(0.2,0.2,0.2);			
@@ -192,8 +193,11 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
   //pushMatrix(modelMatrix);
   
   gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
-  gl.drawArrays(gl.LINE_LOOP, 10, 10);
+  gl.drawArrays(gl.LINE_LOOP, 21, 10);
   
+  modelMatrix.translate(0, 0, 0.07);
+  gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
+  gl.drawArrays(gl.LINE_LOOP, 21, 10);
  
 //-------2nd  small star----------------
   //modelMatrix = popMatrix();
@@ -204,23 +208,28 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
   pushMatrix(modelMatrix);
   // DRAW BOX: Use this matrix to transform & draw our VBO's contents:
   gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
-  gl.drawArrays(gl.LINE_LOOP, 10, 10);
- 
+  gl.drawArrays(gl.LINE_LOOP, 21, 10);
+
+  modelMatrix.translate(0, 0, 0.07);
+  gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
+  gl.drawArrays(gl.LINE_LOOP, 21, 10); 
 
 //-------3rd  small star----------------
   modelMatrix = popMatrix();
 	// Now move drawing axes to the centered end of that lower-jaw segment:
 	modelMatrix.translate(0.85, -0.65, 0.0);
 	modelMatrix.scale(0.8, 0.8, 0.8);    
-  modelMatrix.rotate(-10, 0,0,1);		// make bend in the lower jaw
+  modelMatrix.rotate(-10, 1,0,1);		// make bend in the lower jaw
 	//modelMatrix.translate(-0.1, 0.0, 0.0);	// re-center the outer segment,
   modelMatrix.rotate(0.5*currentAngle, 0,0,1);  
 	// Draw outer lower jaw segment:				
   // DRAW BOX: Use this matrix to transform & draw our VBO's contents:
   gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
-  gl.drawArrays(gl.LINE_LOOP, 10, 10);
+  gl.drawArrays(gl.LINE_LOOP, 21, 10);
 
-*/
+  modelMatrix.translate(0, 0, 0.07);
+  gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
+  gl.drawArrays(gl.LINE_LOOP, 21, 10);
 
 }
 
