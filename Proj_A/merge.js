@@ -1,24 +1,24 @@
 
 // Vertex shader program----------------------------------
-var VSHADER_SOURCE =
-  'attribute vec4 a_Position;\n' +
+var VSHADER_SOURCE = 
   'uniform mat4 u_ModelMatrix;\n' +
+  'attribute vec4 a_Position;\n' +
   'attribute vec4 a_Color;\n' +
   'varying vec4 v_Color;\n' +
   'void main() {\n' +
   '  gl_Position = u_ModelMatrix * a_Position;\n' +
+  '  gl_PointSize = 10.0;\n' +
   '  v_Color = a_Color;\n' +
-  '  gl_PointSize = 10.0;\n' + //added
   '}\n';
 
 // Fragment shader program----------------------------------
-var FSHADER_SOURCE =
+var FSHADER_SOURCE = 
 //  '#ifdef GL_ES\n' +
   'precision mediump float;\n' +
 //  '#endif GL_ES\n' +
   'varying vec4 v_Color;\n' +
   'void main() {\n' +
-  '  gl_FragColor = v_Color;\n' + //vec4(1.0, 1.0, 0.0, 1.0);\n' +
+  '  gl_FragColor = v_Color;\n' +
   '}\n';
 //  Each instance computes all the on-screen attributes for just one PIXEL.
 // here we do the bare minimum: if we draw any part of any drawing primitive in 
@@ -125,8 +125,94 @@ function initVertexBuffers(gl) {
    0.7,  -0.25,  0, 1,      1, 0, 1,
    1,     0.0,   0, 1,      1, 0, 0,
    0.63,  0.0,   0, 1,      0, 0, 1,
+
+    // +x face: RED
+     2.0, -2.0, -2.0, 1.0,    0.2, 0, 0,  // Node 3
+     2.0,  0.0, -2.0, 1.0,    0.2, 0, 0,  // Node 2
+     2.5,  -1,     -1, 1 ,    0, 0, 0,  //pointly
+
+     2.5,  -1,     -1, 1 ,     0.1, 0.2, 0.2,  //pointly
+     2.0,  0,       0, 1,      0.5, 0, 0,  // Node 4
+     2.0,  0,    -2.0, 1.0,    0.2, 0, 0,  // Node 2
+     
+     2.0,  0.0,  0.0, 1.0,    0.2, 0, 0, // Node 4
+     2.0, -2.0,  0.0, 1.0,    0.2, 0, 0,  // Node 7
+     2.5, -1.0,   -1, 1 ,     0.3, 0.2, 0.2,  //pointly
+     
+     2.0, -2.0,  0.0, 1.0,    0.2, 0, 0,  // Node 7
+     2.5, -1,    -1, 1 ,     0.3, 0.2, 0.2,  //pointly
+     2.0, -2.0, -2.0, 1.0,    0.2, 0, 0,  // Node 3
+
+    // +y face: GREEN
+    0.0,  0.0, -2.0, 1.0,    0.0, 1.0, 0.0,  // Node 1
+    0.0,  0.0,  0.0, 1.0,    0.0, 1.0, 0.0,  // Node 5
+    1.0,  0.5, -1.0,    1,     0.0, 1.0, 0.0,    //pointy
+
+      1.0,  0.5,  -1.0, 1,     0.0, 1.0, 0.0,    //pointy  
+     2.0,  0.0,  0.0, 1.0,    1.0, 0.0, 0.0,  // Node 4
+     0.0,  0.0,  0.0, 1.0,    0.0, 1.0, 0.0,  // Node 5
+
+       1,  0.5,  -1,    1,     0.0, 1.0, 0.0,    //pointy  
+     2.0,  0.0,  0.0, 1.0,    1.0, 0.0, 0.0,  // Node 4
+     2.0,  0.0, -2.0, 1.0,    1.0, 0.0, 0.0,  // Node 2 
+    
+     1.0,  0.5,  -1.0,    1,    0.0, 1.0, 1.0,    //pointy 
+     2.0,  0.0, -2.0, 1.0,    1.0, 0.0, 1.0,  // Node 2  
+     0.0,  0.0, -2.0, 1.0,    0.0, 1.0, 1.0,   // Node 1
+
+    // -x face: CYAN
+    0.0, -2.0,  0.0, 1.0,    0.0, 1.0, 1.0,  // Node 6 
+    0.0,  0.0,  0.0, 1.0,    0.0, 1.0, 1.0,  // Node 5 
+   -0.5, -1.0, -1.0, 1.0,    0.0, 0.0, 1.0,  // pointy
+
+    0.0, -2.0,  0.0, 1.0,    0.0, 1.0, 1.0,  // Node 6 
+    -0.5, -1.0, -1.0, 1.0,    0.0, 0.0, 1.0,  // pointy
+    0.0, -2.0, -2.0, 1.0,    0.1, 1.0, 1.0,  // Node 0 
+
+   -0.5, -1.0, -1.0, 1.0,    0.0, 0.0, 1.0,  // pointy
+    0.0, -2.0, -2.0, 1.0,    0.1, 1.0, 1.0,  // Node 0 
+    0.0,  0.0, -2.0, 1.0,    0.0, 1.0, 1.0,  // Node 1
+    
+   -0.5, -1.0, -1.0, 1.0,    0.0, 0.0, 1.0,  // pointy
+   0.0,  0.0, -2.0, 1.0,    0.0, 1.0, 1.0,  // Node 1
+   0.0,  0.0,  0.0, 1.0,    0.0, 1.0, 1.0,  // Node 5 
+   
+    // -y face: MAGENTA
+     2.0, -2.0, -2.0, 1.0,    1.0, 1.0, 1.0,  // Node 3
+     2.0, -2.0,  0.0, 1.0,    0.0, 0.0, 1.0,  // Node 7
+     1.0, -2.5, -1.0, 1.0,    0.0, 0.0, 1.0,  // pointy
+
+     1.0, -2.5, -1.0, 1.0,    1.0, 0.0, 1.0,  // pointy
+     0.0, -2.0,  0.0, 1.0,    1.0, 0.0, 1.0,  // Node 6
+      2.0, -2.0,  0.0, 1.0,    1.0, 0.0, 1.0,  // Node 7
+
+    1.0, -2.5, -1.0, 1.0,    1.0, 0.0, .2,  // pointy
+     0.0, -2.0,  0.0, 1.0,    1.0, 0.0, .2,  // Node 6
+    -0.0, -2.0, -2.0, 1.0,    1.0, 0.1, .2,  // Node 0
+     
+      1.0, -2.5, -1.0, 1.0,    1.0, 0.0, 1.0,  // pointy
+     2.0, -2.0, -2.0, 1.0,    1.0, 0.0, 1.0,  // Node 3
+     -0.0, -2.0, -2.0, 1.0,    1.0, 0.1, 1.0,  // Node 0
+
+     // -z face: YELLOW
+     2.0,  0.0, -2.0, 1.0,    1.0, 1.0, 1.0,  // Node 2
+     2.0, -2.0, -2.0, 1.0,    1.0, 1.0, 1.0,  // Node 3
+     1.0, -1.0, -2.5, 1.0,    1.0, 1.0, 0.0,  // pointy
+
+     1.0, -1.0, -2.5, 1.0,    1.0, 1.0, 0.0,  // pointy
+     0.0,  0.0, -2.0, 1.0,    1.0, 1.0, 1.0,  // Node 1
+     2.0,  0.0, -2.0, 1.0,    1.0, 1.0, 0.0,  // Node 2
+
+    1.0, -1.0, -2.5, 1.0,    1.0, 1.0, 0.0,  // pointy
+     0.0,  0.0, -2.0, 1.0,    1.0, 1.0, 0.1,  // Node 1
+    0.0, -2.0, -2.0, 1.0,    1.0, 1.0, 0.0,  // Node 0   
+
+    1.0, -1.0, -2.5, 1.0,    1.0, 1.0, 0.0,  // pointy
+    0.0, -2.0, -2.0, 1.0,    1.0, 1.0, 0.0,  // Node 0  
+    2.0, -2.0, -2.0, 1.0,    1.0, 1.0, 0.0,  // Node 3
+ 
   ]);
-  var n = 31;   // The number of vertices
+  var n = 91;   // The number of vertices
 
   // Create a buffer object. same as shapeBufferHandle
   var vertexBuffer = gl.createBuffer();
@@ -174,8 +260,8 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
   // Clear <canvas>
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   //------- Starly girl with her pony tail------------------------
-  // -------big star---------------
-  modelMatrix.setTranslate(0,0.1, 0.0);  
+  // -------Crown body---------------
+  modelMatrix.setTranslate(0.3,0.1, 0.0);  
   //modelMatrix.scale(0.7,0.7,0.7); 
   modelMatrix.rotate(30, 0, 1,0); 
   modelMatrix.rotate(currentAngle, 0, 1, 0);  
@@ -190,23 +276,6 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
 
     gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);    
     gl.drawArrays(gl.LINES, 7, 14);
-
-
-
-/*
-    //layer 3
-    modelMatrix.translate(0.01, 0.01,0);
-    gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);    
-    gl.drawArrays(gl.LINE_LOOP, 0, 10);
-*/
-  // var i = 0; 
-  // while(i < 6){
-  //   modelMatrix = popMatrix();
-  //   modelMatrix.translate(0.01, -0.01,0);
-  //   gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);    
-  //   gl.drawArrays(gl.LINE_LOOP, 0, 10);
-  // }
-
 
  //-------1nd  small star----------------
   modelMatrix.translate(0, 0.65, 0); 			
@@ -254,6 +323,54 @@ function draw(gl, n, currentAngle, modelMatrix, u_ModelMatrix) {
   gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
   gl.drawArrays(gl.LINE_LOOP, 21, 10);
 
+
+//-------second object
+modelMatrix.setTranslate(-0.8, 0.2, 0.0);              
+  modelMatrix.scale(1,1,-1);              
+  modelMatrix.scale(0.1, 0.1, 0.1);             
+  modelMatrix.rotate(currentAngle, 0, 0, 1);  
+
+  gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
+  gl.drawArrays(gl.TRIANGLES, 31,60);
+
+//second
+  modelMatrix.translate(2, -2, -2);
+  modelMatrix.rotate(0.2*currentAngle, 0, 1, 1);  
+  modelMatrix.scale(0.8, 0.8, 0.8);    
+  gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
+  gl.drawArrays(gl.TRIANGLES, 31,60);
+
+  //third
+  modelMatrix.translate(2, -2, -2);
+  modelMatrix.rotate(-50, 1, 0, 0);
+  modelMatrix.rotate(0.2*currentAngle, 1, 0, 0);  
+  modelMatrix.scale(0.8, 0.8, 0.8);  
+  gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
+  gl.drawArrays(gl.TRIANGLES, 31,60);
+
+//fourth
+  modelMatrix.translate(2, -2, -2);
+  modelMatrix.rotate(-30, 1, 0, 0);
+  modelMatrix.rotate(2*currentAngle, 1, 0, 0);  
+  modelMatrix.scale(0.8, 0.8, 0.8);  
+  gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
+  gl.drawArrays(gl.TRIANGLES, 31,60);
+
+//fifth
+  modelMatrix.translate(2, -2, -2);
+ // modelMatrix.rotate(-30, 1, 0, 0);
+  modelMatrix.rotate(0.2*currentAngle, 1, 0, 0);  
+  modelMatrix.scale(0.8, 0.8, 0.8);  
+  gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
+  gl.drawArrays(gl.TRIANGLES, 31,60);
+
+  //sixth
+  modelMatrix.translate(2, -2, -2);
+  //modelMatrix.rotate(-30, 1, 0, 0);
+  modelMatrix.rotate(3*currentAngle, 1, 0, 0);  
+  modelMatrix.scale(0.8, 0.8, 0.8);  
+  gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
+  gl.drawArrays(gl.TRIANGLES, 31,60);
 }
 
 // Last time that this function was called:  (used for animation timing)
