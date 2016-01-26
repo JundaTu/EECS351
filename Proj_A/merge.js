@@ -521,3 +521,15 @@ function myMouseUp(ev, gl, canvas) {
 //   yMdragTot = 0.0;
 // }
 
+
+function spinUp() {
+// Called when user presses the 'Spin >>' button on our webpage.
+// ?HOW? Look in the HTML file (e.g. ControlMulti.html) to find
+// the HTML 'button' element with onclick='spinUp()'.
+  ANGLE_STEP += 25; 
+}
+
+function spinDown() {
+// Called when user presses the 'Spin <<' button
+ ANGLE_STEP -= 25; 
+}
