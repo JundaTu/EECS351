@@ -161,8 +161,8 @@ function makeGroundGrid() {
   var xcount = 100;     // # of lines to draw in x,y to make the grid.
   var ycount = 100;   
   var xymax = 50.0;     // grid size; extends to cover +/-xymax in x and y.
-  var xColr = new Float32Array([0, 1.0, 2.0]);  // bright yellow
-  var yColr = new Float32Array([0.5, 0.0, 0.9]);  // bright green.
+  var xColr = new Float32Array([1, 0.5, 2.0]);  // bright yellow
+  var yColr = new Float32Array([0, 0.0, 0.9]);  // bright green.
   
   // Create an (global) array to hold this ground-plane's vertices:
   gndVerts = new Float32Array(floatsPerVertex*2*(xcount+ycount));
@@ -221,7 +221,7 @@ function initVertexBuffers(gl) {
   
   // makeBoard();
   makeTetrahedron();
-  // makeBody();
+  makeBody();
   // makeHead();
   //makeSphere();
   makeGroundGrid();
@@ -229,7 +229,7 @@ function initVertexBuffers(gl) {
   makeTorus();
   makeAxes();
 
-  var mySiz = (/*bdVerts.length + */ttrVerts.length +gndVerts.length+cylVerts.length+torVerts.length+axVerts.length/*+bdVerts.length*/);
+  var mySiz = (bdyVerts.length + ttrVerts.length +gndVerts.length+cylVerts.length+torVerts.length+axVerts.length/*+bdVerts.length*/);
 
   // How many vertices total?
   var nn = mySiz / floatsPerVertex;
@@ -237,13 +237,13 @@ function initVertexBuffers(gl) {
   // Copy all shapes into one big Float32 array:
   var colorShapes = new Float32Array(mySiz);
 
-  // bdStart = 0;             // we stored the cylinder first.
-  // for(i=0,j=0; j< bdVerts.length; i++,j++) {
-  //   colorShapes[i] = bdVerts[j];
-  //   }
+  bdyStart = 0;             // we stored the cylinder first.
+  for(i=0,j=0; j< bdyVerts.length; i++,j++) {
+    colorShapes[i] = bdyVerts[j];
+    }
    
-  ttrStart = 0;           // next, we'll store the sphere;
-  for(i=0, j=0; j< ttrVerts.length; i++, j++) {// don't initialize i -- reuse it!
+  ttrStart = i;           // next, we'll store the sphere;
+  for(j=0; j< ttrVerts.length; i++, j++) {// don't initialize i -- reuse it!
     colorShapes[i] = ttrVerts[j];
     }
 /*
@@ -424,6 +424,7 @@ function keydown(ev, gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod,
     } 
   else 
     if (ev.keyCode == 38) { // up arrow - step forward
+
         tmpVec3 = new Vector3();
         tmpVec3 = vec3FromEye2LookAt(g_EyeX, g_EyeY, g_EyeZ, g_LookAtX, g_LookAtY, g_LookAtZ);
         
@@ -612,41 +613,28 @@ function draw(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod, curren
   
   // Clear <canvas> color AND DEPTH buffer
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+ //------------FIRST VIEW PORT
   gl.viewport(0, 0, canvas.width/2, canvas.height);
   projMatrix.setPerspective(40, (0.5*canvas.width)/canvas.height, 1, 100);
- 
-    // Draw in the SECOND of several 'viewports'
-  //------------------------------------------
-  
-
-
-  // but use a different 'view' matrix:
   viewMatrix.setLookAt(g_EyeX, g_EyeY, g_EyeZ, // eye position
                       g_LookAtX, g_LookAtY, g_LookAtZ,                  // look-at point 
                       0, 1, 0);                 // up vector
 
-  // Pass the view projection matrix to our shaders:
-  
   mvpMatrix.set(projMatrix).multiply(viewMatrix).multiply(modelMatrix);
-  gl.uniformMatrix4fv(u_MvpMatrix, false, mvpMatrix.elements);
-  
-  // Draw the scene:
-  
+  gl.uniformMatrix4fv(u_MvpMatrix, false, mvpMatrix.elements);  
   drawMyScene(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod, currentAngle,canvas);
 
-/*gl.viewport(canvas.width/2, 0, canvas.width/2, canvas.height/2);
-  projMatrix.setOrtho(-0.5*canvas.width/300, 0.5*canvas.width/300,          // left,right;
-                      -canvas.height/300, canvas.height/300,          // bottom, top;
+//------SECOND VIEW PORT
+  gl.viewport(canvas.width/2, 0, canvas.width/2, canvas.height);
+  projMatrix.setOrtho(-0.5*canvas.width/400, 0.5*canvas.width/400,          // left,right;
+                      -canvas.height/400, canvas.height/400,          // bottom, top;
                       1, 100);       // near, far; (always >=0)
-
-  
-
   viewMatrix.setLookAt(g_EyeX, g_EyeY, g_EyeZ, // eye position
                       g_LookAtX, g_LookAtY, g_LookAtZ,                  // look-at point 
                       0, 1, 0);
-
+  
   drawMyScene(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod, currentAngle,canvas);
-  */
+  
   
 }
 
@@ -661,6 +649,7 @@ function drawMyScene(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod,
   repe(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod, currentAngle, canvas);
   gl.uniform4f(u_ColorMod, 0, 0, 0, 0.3);
   gl.drawArrays(gl.TRIANGLE_STRIP, cylStart/floatsPerVertex, cylVerts.length/floatsPerVertex);
+  
   //---------------DRAW GROUND
   modelMatrix.setTranslate(0.0, 0.0, 0.0);
   viewMatrix.rotate(-90.0, 1,0,0);  // new one has "+z points upwards",
@@ -679,6 +668,7 @@ function drawMyScene(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod,
                gndVerts.length/floatsPerVertex);   // draw this many vertices
 
   //---------------DRAW GROUND AXES
+  modelMatrix.setTranslate(0.3,-2,0);
   repe(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod, currentAngle, canvas);
   gl.uniform4f(u_ColorMod, 0, 0, 0, 1);
   gl.drawArrays(gl.LINES,             // use this drawing primitive, and
@@ -687,11 +677,26 @@ function drawMyScene(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod,
   
   //-------------------DEAW TORUS
  
-  modelMatrix.setTranslate(-1.5,0,1);
+  modelMatrix.setTranslate(-1.5,-1,1);
   modelMatrix.scale(0.5,0.5,0.5);
+  modelMatrix.rotate(currentAngle,1,1,0);
   repe(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod, currentAngle, canvas);
-  gl.uniform4f(u_ColorMod, 1, 0, 1, 0);
+  gl.uniform4f(u_ColorMod, 0.5, 0, 0.5, 1);
   gl.drawArrays(gl.TRIANGLE_STRIP, torStart/floatsPerVertex, torVerts.length/floatsPerVertex);
+
+  //------------------DRAW CUBE
+  modelMatrix.setTranslate(-1,0,1.5);
+  modelMatrix.scale(1.5,1.5,1.5);
+  repe(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod, currentAngle, canvas);
+  gl.uniform4f(u_ColorMod, 0.5, 0.8, 0.4, 1);
+  gl.drawArrays(gl.TRIANGLES, bdyStart/floatsPerVertex, bdyVerts.length/floatsPerVertex);
+
+  //------------DRAW TETRAHEDRON
+  modelMatrix.setTranslate(2,0,0.4);
+  //modelMatrix.scale(1.5,1.5,1.5);
+  repe(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod, currentAngle, canvas);
+  gl.uniform4f(u_ColorMod, 0, 0, 0, 1);
+  gl.drawArrays(gl.TRIANGLES, ttrStart/floatsPerVertex, ttrVerts.length/floatsPerVertex);
 }
 
 function repe(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod, currentAngle, canvas){
@@ -829,11 +834,11 @@ function makeHead() {
  */
  //Former
   -0.2,-0.2,0.2,1.0, 1,0.9,0.7, 0,0,1, //Node 1
-  0.2,-0.2,0.2,1.0, 1,0.9,0.7,  0,0,1,//Node 2
+  0.2,-0.2,0.2,1.0, 1,0.9,0.7,  1,0,0,//Node 2
   0.2,0.2,0.2,1.0,  1,0.9,0.7,  0,0,1,//Node 3
 
   0.2,0.2,0.2,1.0,  1,0.9,0.7,  0,0,1,//Node 3
-  -0.2,0.2,0.2,1.0, 1,0.9,0.7,  0,0,1,//Node 0
+  -0.2,0.2,0.2,1.0, 1,0.9,0.7,  0,1,1,//Node 0
   -0.2,-0.2,0.2,1.0, 1,0.9,0.7,  0,0,1,//Node 1
 
 //Right
