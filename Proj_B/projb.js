@@ -688,7 +688,7 @@ function drawMyScene(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod,
   modelMatrix.rotate(currentAngle,0,0,1);
   //modelMatrix.translate(0,0,-0.2);
   repe(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod, currentAngle, canvas);
-  gl.uniform4f(u_ColorMod, 0.5, 0.8, 1, 1);
+  gl.uniform4f(u_ColorMod, 1.5, 0.8, 0.4, 1);
   gl.drawArrays(gl.TRIANGLES, hdStart/floatsPerVertex, hdVerts.length/floatsPerVertex);
  
   //----------COORDINATE ON HEAD
@@ -698,6 +698,33 @@ function drawMyScene(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod,
   gl.drawArrays(gl.LINES,             // use this drawing primitive, and
                 axStart/floatsPerVertex, // start at this vertex number, and
                 axVerts.length/floatsPerVertex);   // draw this many vertices
+  //--------------SECOND HEAD
+  modelMatrix.scale(0.6,0.6,0.6);
+   modelMatrix.translate(0,0,0.5);  
+  modelMatrix.rotate(currentAngle*1.5,0.1,0,1);
+  //modelMatrix.translate(0,0,-0.2);
+  repe(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod, currentAngle, canvas);
+  gl.uniform4f(u_ColorMod, 1.5, 0.8, 0.6, 0);
+  gl.drawArrays(gl.TRIANGLES, hdStart/floatsPerVertex, hdVerts.length/floatsPerVertex);
+
+ //--------------THIRD HEAD
+  modelMatrix.scale(0.6,0.6,0.6);
+   modelMatrix.translate(0,0,0.5);  
+  modelMatrix.rotate(currentAngle*2,0,0.2,1);
+  //modelMatrix.translate(0,0,-0.2);
+  repe(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod, currentAngle, canvas);
+  gl.uniform4f(u_ColorMod, 1.5, 0.2, 0.4, 0);
+  gl.drawArrays(gl.TRIANGLES, hdStart/floatsPerVertex, hdVerts.length/floatsPerVertex);
+ 
+   //--------------FOURTH HEAD
+  modelMatrix.scale(0.6,0.6,0.6);
+   modelMatrix.translate(0,0,0.5);  
+  modelMatrix.rotate(-currentAngle*3,0,-0.4,1);
+  //modelMatrix.translate(0,0,-0.2);
+  repe(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod, currentAngle, canvas);
+  gl.uniform4f(u_ColorMod, 1.5, 0.4, 1, 0.2);
+  gl.drawArrays(gl.TRIANGLES, hdStart/floatsPerVertex, hdVerts.length/floatsPerVertex);
+ 
 
   //------------DRAW BODY
  // modelMatrix.setTranslate(0.0,0.0, -4.5);
@@ -707,7 +734,7 @@ function drawMyScene(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod,
   
   modelMatrix = popMatrix()
 
-  modelMatrix.scale(0.5,0.8,0.8);
+  modelMatrix.scale(0.5,0.8,0.4);
   modelMatrix.rotate(180.0, 0,1,0);
   modelMatrix.rotate(90,0,1,0);
   pushMatrix(modelMatrix);
@@ -720,23 +747,56 @@ function drawMyScene(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod,
   //---------DRAW LEFT HAND
   modelMatrix.translate(-0.5,0,0);
   modelMatrix.rotate(80,0,1,0);
-  modelMatrix.scale(0.6,0.6,0.6);
+  modelMatrix.scale(0.4,0.4,0.4);
   modelMatrix.rotate(currentAngle*0.2,0,1,0);
 
   repe(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod, currentAngle, canvas);
   gl.uniform4f(u_ColorMod, 1, 0.5, 0.5, 1);
   gl.drawArrays(gl.TRIANGLES, bdyStart/floatsPerVertex, bdyVerts.length/floatsPerVertex);
- 
+  
+  //---------DRAW LEFT HAND 2
+  modelMatrix.translate(-2,0,0);
+  modelMatrix.scale(0.6,0.6,0.6);
+  modelMatrix.rotate(currentAngle*1, 0,1,0);
+  repe(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod, currentAngle, canvas);
+  gl.uniform4f(u_ColorMod, 1, 0.5, 0.5, 1);
+  gl.drawArrays(gl.TRIANGLES, bdyStart/floatsPerVertex, bdyVerts.length/floatsPerVertex);
 
+  //---------DRAW LEFT HAND 3
+  modelMatrix.translate(-2,0,0);
+  modelMatrix.scale(0.6,0.6,0.6);
+  modelMatrix.rotate(currentAngle*1.5, 0,1,0.2);
+  repe(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod, currentAngle, canvas);
+  gl.uniform4f(u_ColorMod, 1, 0.5, 0.5, 1);
+  gl.drawArrays(gl.TRIANGLES, bdyStart/floatsPerVertex, bdyVerts.length/floatsPerVertex);
+
+  
  //----------DEAW RIGHT HAND
   modelMatrix = popMatrix();
   modelMatrix.translate(-0.5,0,0);
   modelMatrix.rotate(-80,0,1,0);
-  modelMatrix.scale(0.6,0.6,0.6);
+  modelMatrix.scale(0.4,0.4,0.4);
   modelMatrix.rotate(-currentAngle*0.2,0,1,0);
   repe(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod, currentAngle, canvas);
   gl.uniform4f(u_ColorMod, 1, 0.5, 0.5, 1);
   gl.drawArrays(gl.TRIANGLES, bdyStart/floatsPerVertex, bdyVerts.length/floatsPerVertex);
+
+  //---------DRAW RIGHT HAND 2
+  modelMatrix.translate(-2,0,0);
+  modelMatrix.scale(0.6,0.6,0.6);
+  modelMatrix.rotate(currentAngle*1, 0,1,0);
+  repe(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod, currentAngle, canvas);
+  gl.uniform4f(u_ColorMod, 1, 0.5, 0.5, 1);
+  gl.drawArrays(gl.TRIANGLES, bdyStart/floatsPerVertex, bdyVerts.length/floatsPerVertex);
+  
+   //---------DRAW RIGHT HAND 3
+  modelMatrix.translate(-2,0,0);
+  modelMatrix.scale(0.6,0.6,0.6);
+  modelMatrix.rotate(currentAngle*1, 0,1,0);
+  repe(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod, currentAngle, canvas);
+  gl.uniform4f(u_ColorMod, 1, 0.5, 0.5, 1);
+  gl.drawArrays(gl.TRIANGLES, bdyStart/floatsPerVertex, bdyVerts.length/floatsPerVertex);
+  
 
   //------------DRAW LOWER LEFT
   modelMatrix = popMatrix();
@@ -745,6 +805,22 @@ function drawMyScene(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod,
   modelMatrix.scale(0.6,0.6,0.6);
   modelMatrix.rotate(currentAngle*0.2,0,1,0);
 
+  repe(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod, currentAngle, canvas);
+  gl.uniform4f(u_ColorMod, 1, 0.5, 0.5, 1);
+  gl.drawArrays(gl.TRIANGLES, bdyStart/floatsPerVertex, bdyVerts.length/floatsPerVertex);
+
+//---------DRAW LOWER LEFT HAND 2
+  modelMatrix.translate(-2,0,0);
+  modelMatrix.scale(0.4,0.4,0.4);
+  modelMatrix.rotate(currentAngle*1, 0,1,0);
+  repe(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod, currentAngle, canvas);
+  gl.uniform4f(u_ColorMod, 1, 0.5, 0.5, 1);
+  gl.drawArrays(gl.TRIANGLES, bdyStart/floatsPerVertex, bdyVerts.length/floatsPerVertex);
+
+  //---------DRAW LOWER LEFT HAND 3
+  modelMatrix.translate(-2,0,0);
+  modelMatrix.scale(0.4,0.4,0.4);
+  modelMatrix.rotate(currentAngle*1.5, 0,1,0.2);
   repe(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod, currentAngle, canvas);
   gl.uniform4f(u_ColorMod, 1, 0.5, 0.5, 1);
   gl.drawArrays(gl.TRIANGLES, bdyStart/floatsPerVertex, bdyVerts.length/floatsPerVertex);
@@ -759,7 +835,22 @@ function drawMyScene(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod,
   gl.uniform4f(u_ColorMod, 1, 0.5, 0.5, 1);
   gl.drawArrays(gl.TRIANGLES, bdyStart/floatsPerVertex, bdyVerts.length/floatsPerVertex);
 
-
+ //---------DRAW LOWER RIGHT HAND 2
+  modelMatrix.translate(-2,0,0);
+  modelMatrix.scale(0.4,0.4,0.4);
+  modelMatrix.rotate(currentAngle*1, 0,1,0);
+  repe(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod, currentAngle, canvas);
+  gl.uniform4f(u_ColorMod, 1, 0.5, 0.5, 1);
+  gl.drawArrays(gl.TRIANGLES, bdyStart/floatsPerVertex, bdyVerts.length/floatsPerVertex);
+  
+   //---------DRAW LOWER RIGHT HAND 3
+  modelMatrix.translate(-2,0,0);
+  modelMatrix.scale(0.4,0.4,0.4);
+  modelMatrix.rotate(currentAngle*1, 0,1,0);
+  repe(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod, currentAngle, canvas);
+  gl.uniform4f(u_ColorMod, 1, 0.5, 0.5, 1);
+  gl.drawArrays(gl.TRIANGLES, bdyStart/floatsPerVertex, bdyVerts.length/floatsPerVertex);
+  
 
 }
 
@@ -897,45 +988,45 @@ function makeHead() {
 
  */
  //Former
-  -0.2,-0.2,0.2,1.0, 1,0.9,0.7, 0,0,1, //Node 1
-  0.2,-0.2,0.2,1.0, 1,0.9,0.7,  1,0,0,//Node 2
+  -0.2,-0.2,0.2,1.0, 0,0.9,0.7, 0,0,1, //Node 1
+  0.2,-0.2,0.2,1.0, 1,0.5,0.7,  1,0,0,//Node 2
   0.2,0.2,0.2,1.0,  1,0.9,0.7,  0,0,1,//Node 3
 
-  0.2,0.2,0.2,1.0,  1,0.9,0.7,  0,0,1,//Node 3
-  -0.2,0.2,0.2,1.0, 1,0.9,0.7,  0,1,1,//Node 0
-  -0.2,-0.2,0.2,1.0, 1,0.9,0.7,  0,0,1,//Node 1
+  0.2,0.2,0.2,1.0,  1,0.2,0.7,  0,0,1,//Node 3
+  -0.2,0.2,0.2,1.0, 1,0.2,0.7,  0,1,1,//Node 0
+  -0.2,-0.2,0.2,1.0, 0,0.9,1,  0,0,1,//Node 1
 
 //Right
-  0.2,0.2,0.2,1.0,  1,0.9,0.7, 1,0,0, //Node 3
+  0.2,0.2,0.2,1.0,  0.5,0.3,0.7, 1,0,0, //Node 3
   0.2,-0.2,0.2,1.0, 1,0.9,0.7, 1,0,0, //Node 2
-  0.2,-0.2,-0.2,1.0,  0.4,0.4,0.4,  1,0,0,//Node 6
+  0.2,-0.2,-0.2,1.0,  0.6,0.2,0.4,  1,0,0,//Node 6
 
-  0.2,-0.2,-0.2,1.0,  0.4,0.4,0.4, 1,0,0, //Node 6
-  0.2,0.2,-0.2,1.0, 0.4,0.4,0.4, 1,0,0, //Node 5
+  0.2,-0.2,-0.2,1.0,  0.7,0,0.2, 1,0,0, //Node 6
+  0.2,0.2,-0.2,1.0, 0.2,0.4,0.1, 1,0,0, //Node 5
   0.2,0.2,0.2,1.0,  1,0.9,0.7,  1,0,0,//Node 3
 
 //Back
-    -0.2,0.2,-0.2,1.0,  0.4,0.4,0.4,  0,0,-1,//Node 4
-  -0.2,-0.2,-0.2,1.0, 0.4,0.4,0.4,  0,0,-1,//Node 7
-  0.2,-0.2,-0.2,1.0, 0.4,0.4,0.4,  0,0,-1,//Node 6
+    -0.2,0.2,-0.2,1.0,  0.2,0.4,0.4,  0,0,-1,//Node 4
+  -0.2,-0.2,-0.2,1.0, 0.4,0.8,0.4,  0,0,-1,//Node 7
+  0.2,-0.2,-0.2,1.0, 0.5,0.1,0.4,  0,0,-1,//Node 6
 
-  0.2,-0.2,-0.2,1.0,  0.4,0.4,0.4,  0,0,-1,//Node 6
-  0.2,0.2,-0.2,1.0, 0.4,0.4,0.4, 0,0,-1, //Node 5
-  -0.2,0.2,-0.2,1.0,  0.4,0.4,0.4,  0,0,-1,//Node 4
+  0.2,-0.2,-0.2,1.0,  0.1,0.3,0.4,  0,0,-1,//Node 6
+  0.2,0.2,-0.2,1.0, 0.4,0,0.4, 0,0,-1, //Node 5
+  -0.2,0.2,-0.2,1.0,  0.3,1,0.4,  0,0,-1,//Node 4
 
 //Left
-  -0.2,0.2,0.2,1.0, 1,0.9,0.7,  -1,0,0,//Node 0
+  -0.2,0.2,0.2,1.0, 2,0.3,0.7,  -1,0,0,//Node 0
   -0.2,-0.2,0.2,1.0, 1,0.9,0.7,  -1,0,0,//Node 1
-  -0.2,-0.2,-0.2,1.0, 0.4,0.4,0.4,  -1,0,0,//Node 7
+  -0.2,-0.2,-0.2,1.0, 0.5,1,0.8,  -1,0,0,//Node 7
 
-  -0.2,-0.2,-0.2,1.0, 0.4,0.4,0.4,  -1,0,0,//Node 7
-  -0.2,0.2,-0.2,1.0,  0.4,0.4,0.4, -1,0,0, //Node 4
-  -0.2,0.2,0.2,1.0, 1,0.9,0.7,  -1,0,0,//Node 0
+  -0.2,-0.2,-0.2,1.0, 0.7,0.4,0.4,  -1,0,0,//Node 7
+  -0.2,0.2,-0.2,1.0,  0.2,0.6,0.4, -1,0,0, //Node 4
+  -0.2,0.2,0.2,1.0, 1,0.2,0.7,  -1,0,0,//Node 0
 
 //Top
-  -0.2,0.2,0.2,1.0, 1,0.9,0.7, 0,1,0, //Node 0
-  0.2,0.2,0.2,1.0,  1,0.9,0.7,  0,1,0,//Node 3
-  0.2,0.2,-0.2,1.0, 0.4,0.4,0.4,  0,1,0,//Node 5
+  -0.2,0.2,0.2,1.0, 0.5,0.2,0.7, 0,1,0, //Node 0
+  0.2,0.2,0.2,1.0,  0.3,0.3,0.7,  0,1,0,//Node 3
+  0.2,0.2,-0.2,1.0, 0.6,0.4,0.4,  0,1,0,//Node 5
 
   0.2,0.2,-0.2,1.0, 0.4,0.4,0.4,  0,1,0,//Node 5
   -0.2,0.2,-0.2,1.0,  0.4,0.4,0.4, 0,1,0, //Node 4
