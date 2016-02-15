@@ -652,8 +652,8 @@ function draw(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod, curren
 
 
 function drawMyScene(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod, currentAngle, canvas) {
-    // Rotate to make a new set of 'world' drawing axes: 
- // old one had "+y points upwards", but
+  pushMatrix()
+  //---------------DRAW GROUND
   modelMatrix.setTranslate(0.0, 0.0, 0.0);
   viewMatrix.rotate(-90.0, 1,0,0);  // new one has "+z points upwards",
                                       // made by rotating -90 deg on +x-axis.
@@ -664,18 +664,29 @@ function drawMyScene(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod,
                                       //for nicer-looking ground-plane, and
   // Pass the modified view matrix to our shaders:
   
-  mvpMatrix.set(projMatrix).multiply(viewMatrix).multiply(modelMatrix);
-  gl.uniformMatrix4fv(u_MvpMatrix, false, mvpMatrix.elements);
-  gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
-  normalMatrix.setInverseOf(modelMatrix);
-  normalMatrix.transpose();
-  gl.uniformMatrix4fv(u_NormalMatrix, false, normalMatrix.elements);
+  repe(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod, currentAngle, canvas);
   gl.uniform4f(u_ColorMod, 0, 0, 0, 1);
   gl.drawArrays(gl.LINES,              // use this drawing primitive, and
                gndStart/floatsPerVertex, // start at this vertex number, and
                gndVerts.length/floatsPerVertex);   // draw this many vertices
 
+  //---------------DRAW GROUND AXES
+  repe(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod, currentAngle, canvas);
+  gl.uniform4f(u_ColorMod, 0, 0, 0, 1);
+  gl.drawArrays(gl.LINES,             // use this drawing primitive, and
+                axStart/floatsPerVertex, // start at this vertex number, and
+                axVerts.length/floatsPerVertex);
+  
 
+}
+
+function repe(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod, currentAngle, canvas){
+    mvpMatrix.set(projMatrix).multiply(viewMatrix).multiply(modelMatrix);
+    gl.uniformMatrix4fv(u_MvpMatrix, false, mvpMatrix.elements);
+    gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
+    normalMatrix.setInverseOf(modelMatrix);
+    normalMatrix.transpose();
+    gl.uniformMatrix4fv(u_NormalMatrix, false, normalMatrix.elements);
 }
 
 function makeTetrahedron() {
