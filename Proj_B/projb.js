@@ -161,8 +161,8 @@ function makeGroundGrid() {
   var xcount = 100;     // # of lines to draw in x,y to make the grid.
   var ycount = 100;   
   var xymax = 50.0;     // grid size; extends to cover +/-xymax in x and y.
-  var xColr = new Float32Array([1.0, 1.0, 0.3]);  // bright yellow
-  var yColr = new Float32Array([0.5, 1.0, 0.5]);  // bright green.
+  var xColr = new Float32Array([0, 1.0, 2.0]);  // bright yellow
+  var yColr = new Float32Array([0.5, 0.0, 0.9]);  // bright green.
   
   // Create an (global) array to hold this ground-plane's vertices:
   gndVerts = new Float32Array(floatsPerVertex*2*(xcount+ycount));
@@ -652,7 +652,15 @@ function draw(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod, curren
 
 
 function drawMyScene(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod, currentAngle, canvas) {
-  pushMatrix()
+  // modelMatrix.setTranslate(0,0,0);
+   //modelMatrix.rotate(-90.0, 1,0,0);
+   //-------------------DEAW CYLINDER
+  modelMatrix.setTranslate(0.0, 0.0, 0.0);
+  modelMatrix.scale(0.2,0.2,0.2);
+  modelMatrix.rotate(70,1,0,0);
+  repe(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod, currentAngle, canvas);
+  gl.uniform4f(u_ColorMod, 0, 0, 0, 0.3);
+  gl.drawArrays(gl.TRIANGLE_STRIP, cylStart/floatsPerVertex, cylVerts.length/floatsPerVertex);
   //---------------DRAW GROUND
   modelMatrix.setTranslate(0.0, 0.0, 0.0);
   viewMatrix.rotate(-90.0, 1,0,0);  // new one has "+z points upwards",
@@ -677,7 +685,13 @@ function drawMyScene(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod,
                 axStart/floatsPerVertex, // start at this vertex number, and
                 axVerts.length/floatsPerVertex);
   
-
+  //-------------------DEAW TORUS
+ 
+  modelMatrix.setTranslate(-1.5,0,1);
+  modelMatrix.scale(0.5,0.5,0.5);
+  repe(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod, currentAngle, canvas);
+  gl.uniform4f(u_ColorMod, 1, 0, 1, 0);
+  gl.drawArrays(gl.TRIANGLE_STRIP, torStart/floatsPerVertex, torVerts.length/floatsPerVertex);
 }
 
 function repe(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod, currentAngle, canvas){
@@ -875,9 +889,9 @@ function makeCylinder() {
 // 'stepped spiral' design described in notes.
 // Cylinder center at origin, encircles z axis, radius 1, top/bottom at z= +/-1.
 //
- var ctrColr = new Float32Array([0.2, 0.2, 0.2]); // dark gray
- var topColr = new Float32Array([0.4, 0.7, 0.4]); // light green
- var botColr = new Float32Array([0.5, 0.5, 1.0]); // light blue
+ var ctrColr = new Float32Array([0, 1.0, 0.2]); // dark gray
+ var topColr = new Float32Array([0, 0.7, 2.0]); // light green
+ var botColr = new Float32Array([1.0, 0, 0.5]); // light blue
  var capVerts = 16; // # of vertices around the topmost 'cap' of the shape
  var botRadius = 1.6;   // radius of bottom of cylinder (top always 1.0)
  
