@@ -681,12 +681,14 @@ function drawMyScene(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod,
   gl.drawArrays(gl.TRIANGLES, ttrStart/floatsPerVertex, ttrVerts.length/floatsPerVertex);
 
  //----------DRAW HEAD
-  modelMatrix.setTranslate(2,0,2);
+  modelMatrix.setTranslate(2,-5,2);
+  pushMatrix(modelMatrix);
+  
   //modelMatrix.scale(0.6,0.6,0.6);
-  modelMatrix.rotate(180.0,0,0,1);
-  //modelMatrix.scale(1.5,1.5,1.5);
+  modelMatrix.rotate(currentAngle,0,0,1);
+  //modelMatrix.translate(0,0,-0.2);
   repe(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod, currentAngle, canvas);
-  gl.uniform4f(u_ColorMod, 0.5, 0, 1, 1);
+  gl.uniform4f(u_ColorMod, 0.5, 0.8, 1, 1);
   gl.drawArrays(gl.TRIANGLES, hdStart/floatsPerVertex, hdVerts.length/floatsPerVertex);
  
   //----------COORDINATE ON HEAD
@@ -698,6 +700,65 @@ function drawMyScene(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod,
                 axVerts.length/floatsPerVertex);   // draw this many vertices
 
   //------------DRAW BODY
+ // modelMatrix.setTranslate(0.0,0.0, -4.5);
+  //modelMatrix.rotate(45.0,0,0,1);
+  // modelMatrix.rotate(45.0, 0,1,0);
+  // modelMatrix.translate(0,-0.4,0);
+  
+  modelMatrix = popMatrix()
+
+  modelMatrix.scale(0.5,0.8,0.8);
+  modelMatrix.rotate(180.0, 0,1,0);
+  modelMatrix.rotate(90,0,1,0);
+  pushMatrix(modelMatrix);
+  pushMatrix(modelMatrix);
+  pushMatrix(modelMatrix);
+  repe(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod, currentAngle, canvas);
+  gl.uniform4f(u_ColorMod, 0.5, 0.5, 0.5, 1);
+  gl.drawArrays(gl.TRIANGLES, bdyStart/floatsPerVertex, bdyVerts.length/floatsPerVertex);
+  
+  //---------DRAW LEFT HAND
+  modelMatrix.translate(-0.5,0,0);
+  modelMatrix.rotate(80,0,1,0);
+  modelMatrix.scale(0.6,0.6,0.6);
+  modelMatrix.rotate(currentAngle*0.2,0,1,0);
+
+  repe(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod, currentAngle, canvas);
+  gl.uniform4f(u_ColorMod, 1, 0.5, 0.5, 1);
+  gl.drawArrays(gl.TRIANGLES, bdyStart/floatsPerVertex, bdyVerts.length/floatsPerVertex);
+ 
+
+ //----------DEAW RIGHT HAND
+  modelMatrix = popMatrix();
+  modelMatrix.translate(-0.5,0,0);
+  modelMatrix.rotate(-80,0,1,0);
+  modelMatrix.scale(0.6,0.6,0.6);
+  modelMatrix.rotate(-currentAngle*0.2,0,1,0);
+  repe(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod, currentAngle, canvas);
+  gl.uniform4f(u_ColorMod, 1, 0.5, 0.5, 1);
+  gl.drawArrays(gl.TRIANGLES, bdyStart/floatsPerVertex, bdyVerts.length/floatsPerVertex);
+
+  //------------DRAW LOWER LEFT
+  modelMatrix = popMatrix();
+  modelMatrix.translate(-1.0,0,0);
+  modelMatrix.rotate(80,0,1,0);
+  modelMatrix.scale(0.6,0.6,0.6);
+  modelMatrix.rotate(currentAngle*0.2,0,1,0);
+
+  repe(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod, currentAngle, canvas);
+  gl.uniform4f(u_ColorMod, 1, 0.5, 0.5, 1);
+  gl.drawArrays(gl.TRIANGLES, bdyStart/floatsPerVertex, bdyVerts.length/floatsPerVertex);
+
+  //----------DEAW RIGHT HAND
+  modelMatrix = popMatrix();
+  modelMatrix.translate(-1.0,0,0);
+  modelMatrix.rotate(-80,0,1,0);
+  modelMatrix.scale(0.6,0.6,0.6);
+  modelMatrix.rotate(-currentAngle*0.2,0,1,0);
+  repe(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod, currentAngle, canvas);
+  gl.uniform4f(u_ColorMod, 1, 0.5, 0.5, 1);
+  gl.drawArrays(gl.TRIANGLES, bdyStart/floatsPerVertex, bdyVerts.length/floatsPerVertex);
+
 
 
 }
