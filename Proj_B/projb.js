@@ -150,9 +150,6 @@ function main() {
 
 }
 
- 
-
-
 function makeGroundGrid() {
 //==============================================================================
 // Create a list of vertices that create a large grid of lines in the x,y plane
@@ -222,14 +219,15 @@ function initVertexBuffers(gl) {
   // makeBoard();
   makeTetrahedron();
   makeBody();
-  // makeHead();
+  makeHead();
   //makeSphere();
+  
   makeGroundGrid();
   makeCylinder();
   makeTorus();
   makeAxes();
 
-  var mySiz = (bdyVerts.length + ttrVerts.length +gndVerts.length+cylVerts.length+torVerts.length+axVerts.length/*+bdVerts.length*/);
+  var mySiz = (hdVerts.length + bdyVerts.length + ttrVerts.length +gndVerts.length+cylVerts.length+torVerts.length+axVerts.length+bdyVerts.length);
 
   // How many vertices total?
   var nn = mySiz / floatsPerVertex;
@@ -246,21 +244,6 @@ function initVertexBuffers(gl) {
   for(j=0; j< ttrVerts.length; i++, j++) {// don't initialize i -- reuse it!
     colorShapes[i] = ttrVerts[j];
     }
-/*
-  sphStart = i;           // next we'll store the ground-plane;
-  for(j=0; j< sphVerts.length; i++, j++) {
-    colorShapes[i] = sphVerts[j];
-    }
-*/    
-  //   bdyStart = i;           // next, we'll store the torus;
-  // for(j=0; j< bdyVerts.length; i++, j++) {
-  //   colorShapes[i] = bdyVerts[j];
-  //   }
-    
-  //   hdStart = i;           // next we'll store the ground-plane;
-  // for(j=0; j< hdVerts.length; i++, j++) {
-  //   colorShapes[i] = hdVerts[j];
-  // }
 
     gndStart=i;
   for(j=0;j<gndVerts.length; i++, j++){
@@ -270,22 +253,21 @@ function initVertexBuffers(gl) {
   for(j=0;j<cylVerts.length;i++,j++){
     colorShapes[i]=cylVerts[j];
   }
-    torStart=i;
+  
+  torStart=i;
   for(j=0;j<torVerts.length;i++,j++){
     colorShapes[i]=torVerts[j];
   }
-    axStart=i;
+  
+  axStart=i;
   for(j=0;j<axVerts.length;i++,j++){
     colorShapes[i]=axVerts[j];
   }
-  //   bdStart=i;
-  // for(j=0;j<bdVerts.length;i++,j++){
-  //   colorShapes[i]=bdVerts[j];
-  // }
-
-  // How much space to store all the shapes in one array?
-  // (no 'var' means this is a global variable)
-  
+ 
+  hdStart = i;
+   for(j=0;j<hdVerts.length;i++,j++){
+    colorShapes[i]=hdVerts[j];
+  }
 
   
   // Create a buffer object
@@ -685,18 +667,39 @@ function drawMyScene(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod,
   gl.drawArrays(gl.TRIANGLE_STRIP, torStart/floatsPerVertex, torVerts.length/floatsPerVertex);
 
   //------------------DRAW CUBE
-  modelMatrix.setTranslate(-1,0,1.5);
-  modelMatrix.scale(1.5,1.5,1.5);
+  modelMatrix.setTranslate(-1,1,1.7);
+  modelMatrix.scale(0.5,8,4);
   repe(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod, currentAngle, canvas);
   gl.uniform4f(u_ColorMod, 0.5, 0.8, 0.4, 1);
   gl.drawArrays(gl.TRIANGLES, bdyStart/floatsPerVertex, bdyVerts.length/floatsPerVertex);
 
   //------------DRAW TETRAHEDRON
-  modelMatrix.setTranslate(2,0,0.4);
-  //modelMatrix.scale(1.5,1.5,1.5);
+  modelMatrix.setTranslate(2,0,0);
+  modelMatrix.scale(1.5,1.5,1.5);
   repe(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod, currentAngle, canvas);
   gl.uniform4f(u_ColorMod, 0, 0, 0, 1);
   gl.drawArrays(gl.TRIANGLES, ttrStart/floatsPerVertex, ttrVerts.length/floatsPerVertex);
+
+ //----------DRAW HEAD
+  modelMatrix.setTranslate(2,0,2);
+  //modelMatrix.scale(0.6,0.6,0.6);
+  modelMatrix.rotate(180.0,0,0,1);
+  //modelMatrix.scale(1.5,1.5,1.5);
+  repe(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod, currentAngle, canvas);
+  gl.uniform4f(u_ColorMod, 0.5, 0, 1, 1);
+  gl.drawArrays(gl.TRIANGLES, hdStart/floatsPerVertex, hdVerts.length/floatsPerVertex);
+ 
+  //----------COORDINATE ON HEAD
+  repe(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod, currentAngle, canvas);
+  gl.uniform4f(u_ColorMod, 1, 0.5, 0, 1);
+
+  gl.drawArrays(gl.LINES,             // use this drawing primitive, and
+                axStart/floatsPerVertex, // start at this vertex number, and
+                axVerts.length/floatsPerVertex);   // draw this many vertices
+
+  //------------DRAW BODY
+
+
 }
 
 function repe(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod, currentAngle, canvas){
@@ -1116,18 +1119,6 @@ function makeAxes(){
 
      0,0,0,1,     1.0,1.0,1.0,  1,0,0,
      0,0,1,1,     0.0,0.0,1.0,  1,0,0,
-    ]);
-}
-
-function makeBoard() {
-   bdVerts = new Float32Array([
-    -1.00,-1.00, 0.00, 1.00,     1.0, 1.0,  0.8,    0,0,1,
-     1.00,-1.00, 0.00, 1.00,    0.9,  1.0,  1.0,    0,0,1,
-     1.00,1.00,0.00,1.00,        1.0,0.6,0.5,   0,0,1,
-
-     1.00, 1.00, 0.00, 1.00,    1.0,0.6,0.5,    0,0,1,
-    -1.00, 1.00, 0.00, 1.00,    0.6,  1.0,  0.6,  0,0,1,  
-     -1.00,-1.00, 0.00, 1.00,    1.0,  1.0,  0.8,   0,0,1,
     ]);
 }
 
