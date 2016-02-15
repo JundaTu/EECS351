@@ -2,14 +2,16 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Project B</title>
+    <title>Look triangle from slant (Move eye position and viewing volume with key)</title>
+    
   </head>
 
-  <body onload="main()">
-    <canvas id="webgl" width="800px" height="400px">
+  <body onload="main()" onresize="resize()" style="width:100%;height:100%;">
+    <canvas id="webgl" width="600" height="600">
     Please use a browser that supports "canvas"
+    
     </canvas>
-
+   
     <script src="lib/webgl-utils.js"></script>
     <script src="lib/webgl-debug.js"></script>
     <script src="lib/cuon-utils.js"></script>
@@ -17,3 +19,6 @@
     <script src="projb.js"></script>
   </body>
 </html>
+
+
+    
