@@ -77,6 +77,12 @@ var colorMod = new Vector4();
 var c30 = Math.sqrt(0.75);
 var sq2 = Math.sqrt(2.0);
 
+var isDrag=false;    // mouse-drag: true when user holds down mouse button
+var xMclik=0.0;     // last mouse button-down position (in CVV coords)
+var yMclik=0.0;   
+var xMdragTot=0.0;  // total (accumulated) mouse-drag amounts (in CVV coords).
+var yMdragTot=0.0;  
+
 //var canvas;
 function main() {
 //==============================================================================
@@ -138,7 +144,13 @@ function main() {
   gl.uniform3f(u_AmbientLightColor, 0.3, 0.3, 0.3);
 
  document.onkeydown = function(ev){ keydown(ev, gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod, currentAngle, canvas); };
-
+ canvas.onmousedown = function(ev){myMouseDown( ev, gl, canvas) }; 
+  
+            // when user's mouse button goes down call mouseDown() function
+  canvas.onmousemove =  function(ev){myMouseMove( ev, gl, canvas) };
+  
+                      // call mouseMove() function          
+  canvas.onmouseup =    function(ev){myMouseUp(   ev, gl, canvas)};
  var currentAngle = 0.0;
  var tick = function() {
     currentAngle = animate(currentAngle);  // Update the rotation angle
@@ -543,12 +555,6 @@ function keydown(ev, gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod,
         g_LookAtX = l * Math.cos(PHI_NOW) * sin_theta + g_EyeX;
         g_LookAtZ = l * Math.cos(PHI_NOW) * cos_theta + g_EyeZ;
       }
-    else
-      if(ev.keyCode==112){
-        console.log(' F1.');
-      document.getElementById('Help1').innerHTML= 'Use Up/Down/Left/Right keys to go ahead/back/left/right';
-      document.getElementById('Help2').innerHTML= 'Use W/S/A/D keys to look ahead/back/left/right.';
-      }
     else { return; } // Prevent the unnecessary drawing
     draw(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod, currentAngle, canvas);    
 }
@@ -622,7 +628,7 @@ function draw(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod, curren
 
 
 function drawMyScene(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod, currentAngle, canvas) {
-  // modelMatrix.setTranslate(0,0,0);
+   // modelMatrix.setTranslate(0,0,0);
    //modelMatrix.rotate(-90.0, 1,0,0);
    //-------------------DEAW CYLINDER
   modelMatrix.setTranslate(0.0, 0.0, 0.0);
@@ -682,6 +688,7 @@ function drawMyScene(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod,
 
  //----------DRAW HEAD
   modelMatrix.setTranslate(2,-5,2);
+ 
   pushMatrix(modelMatrix);
   
   //modelMatrix.scale(0.6,0.6,0.6);
@@ -746,6 +753,10 @@ function drawMyScene(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod,
   
   //---------DRAW LEFT HAND
   modelMatrix.translate(-0.5,0,0);
+   var dist = Math.sqrt(xMclik*xMclik + yMclik*yMclik);
+              // why add 0.001? avoids divide-by-zero in next statement
+              // in cases where user didn't drag the mouse.)
+  modelMatrix.rotate(dist*120.0, -yMdragTot+0.0001, xMdragTot+0.0001, 0.0);
   modelMatrix.rotate(80,0,1,0);
   modelMatrix.scale(0.4,0.4,0.4);
   modelMatrix.rotate(currentAngle*0.2,0,1,0);
@@ -757,6 +768,7 @@ function drawMyScene(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod,
   //---------DRAW LEFT HAND 2
   modelMatrix.translate(-2,0,0);
   modelMatrix.scale(0.6,0.6,0.6);
+
   modelMatrix.rotate(currentAngle*1, 0,1,0);
   repe(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod, currentAngle, canvas);
   gl.uniform4f(u_ColorMod, 1, 0.5, 0.5, 1);
@@ -773,7 +785,12 @@ function drawMyScene(gl, u_MvpMatrix, u_ModelMatrix, u_NormalMatrix, u_ColorMod,
   
  //----------DEAW RIGHT HAND
   modelMatrix = popMatrix();
+
   modelMatrix.translate(-0.5,0,0);
+  var dist = Math.sqrt(xMclik*xMclik + yMclik*yMclik);
+              // why add 0.001? avoids divide-by-zero in next statement
+              // in cases where user didn't drag the mouse.)
+  modelMatrix.rotate(dist*122.0, -yMdragTot+0.0001, xMdragTot+0.0001, 0.0);
   modelMatrix.rotate(-80,0,1,0);
   modelMatrix.scale(0.4,0.4,0.4);
   modelMatrix.rotate(-currentAngle*0.2,0,1,0);
@@ -1297,3 +1314,121 @@ function resize()
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight-100;
 }
+
+function animate(angle) {
+//==============================================================================
+  // Calculate the elapsed time
+  var now = Date.now();
+  var elapsed = now - g_last;
+  g_last = now;
+  
+  // Update the current rotation angle (adjusted by the elapsed time)
+  //  limit the angle to move smoothly between +20 and -85 degrees:
+  if(angle >   0.0 && ANGLE_STEP > 0) ANGLE_STEP = -ANGLE_STEP;
+  if(angle <  -180.0 && ANGLE_STEP < 0) ANGLE_STEP = -ANGLE_STEP;
+  
+  var newAngle = angle + ANGLE_STEP / 50.0;
+  return newAngle %= 360;
+}
+
+function myKeyPress(ev) {
+  if (ev.keyCode == 32){
+    runStop();
+  }
+                   
+}
+
+function runStop() {
+  if(ANGLE_STEP*ANGLE_STEP > 1) {
+    myTmp = ANGLE_STEP;
+    ANGLE_STEP = 0;
+  }
+  else {
+    ANGLE_STEP = myTmp;
+  }
+}
+
+function myMouseDown(ev, gl, canvas) {
+//==============================================================================
+// Called when user PRESSES down any mouse button;
+//                  (Which button?    console.log('ev.button='+ev.button);   )
+//    ev.clientX, ev.clientY == mouse pointer location, but measured in webpage 
+//    pixels: left-handed coords; UPPER left origin; Y increases DOWNWARDS (!)  
+
+// Create right-handed 'pixel' coords with origin at WebGL canvas LOWER left;
+  var rect = ev.target.getBoundingClientRect(); // get canvas corners in pixels
+  var xp = ev.clientX - rect.left;                  // x==0 at canvas left edge
+  var yp = canvas.height - (ev.clientY - rect.top); // y==0 at canvas bottom edge
+//  console.log('myMouseDown(pixel coords): xp,yp=\t',xp,',\t',yp);
+  
+  // Convert to Canonical View Volume (CVV) coordinates too:
+  var x = (xp - canvas.width/2)  /    // move origin to center of canvas and
+               (canvas.width/2);      // normalize canvas to -1 <= x < +1,
+  var y = (yp - canvas.height/2) /    //                     -1 <= y < +1.
+               (canvas.height/2);
+//  console.log('myMouseDown(CVV coords  ):  x, y=\t',x,',\t',y);
+  
+  isDrag = true;                      // set our mouse-dragging flag
+  xMclik = x;                         // record where mouse-dragging began
+  yMclik = y;
+};
+
+
+function myMouseMove(ev, gl, canvas) {
+//==============================================================================
+// Called when user MOVES the mouse with a button already pressed down.
+//                  (Which button?   console.log('ev.button='+ev.button);    )
+//    ev.clientX, ev.clientY == mouse pointer location, but measured in webpage 
+//    pixels: left-handed coords; UPPER left origin; Y increases DOWNWARDS (!)  
+
+  if(isDrag==false) return;       // IGNORE all mouse-moves except 'dragging'
+
+  // Create right-handed 'pixel' coords with origin at WebGL canvas LOWER left;
+  var rect = ev.target.getBoundingClientRect(); // get canvas corners in pixels
+  var xp = ev.clientX - rect.left;                  // x==0 at canvas left edge
+  var yp = canvas.height - (ev.clientY - rect.top); // y==0 at canvas bottom edge
+ console.log('myMouseMove(pixel coords): xp,yp=\t',xp,',\t',yp);
+  
+  // Convert to Canonical View Volume (CVV) coordinates too:
+  var x = (xp - canvas.width/2)  /    // move origin to center of canvas and
+               (canvas.width/2);      // normalize canvas to -1 <= x < +1,
+  var y = (yp - canvas.height/2) /    //                     -1 <= y < +1.
+               (canvas.height/2);
+  console.log('myMouseMove(CVV coords  ):  x, y=\t',x,',\t',y);
+
+  // find how far we dragged the mouse:
+  xMdragTot += (x - xMclik);          // Accumulate change-in-mouse-position,&
+  yMdragTot += (y - yMclik);
+  xMclik = x;                         // Make next drag-measurement from here.
+  yMclik = y;
+};
+
+function myMouseUp(ev, gl, canvas) {
+//==============================================================================
+// Called when user RELEASES mouse button pressed previously.
+//                  (Which button?   console.log('ev.button='+ev.button);    )
+//    ev.clientX, ev.clientY == mouse pointer location, but measured in webpage 
+//    pixels: left-handed coords; UPPER left origin; Y increases DOWNWARDS (!)  
+
+// Create right-handed 'pixel' coords with origin at WebGL canvas LOWER left;
+  var rect = ev.target.getBoundingClientRect(); // get canvas corners in pixels
+  var xp = ev.clientX - rect.left;                  // x==0 at canvas left edge
+  var yp = canvas.height - (ev.clientY - rect.top); // y==0 at canvas bottom edge
+//  console.log('myMouseUp  (pixel coords): xp,yp=\t',xp,',\t',yp);
+  
+  // Convert to Canonical View Volume (CVV) coordinates too:
+  var x = (xp - canvas.width/2)  /    // move origin to center of canvas and
+               (canvas.width/2);      // normalize canvas to -1 <= x < +1,
+  var y = (yp - canvas.height/2) /    //                     -1 <= y < +1.
+               (canvas.height/2);
+  console.log('myMouseUp  (CVV coords  ):  x, y=\t',x,',\t',y);
+  
+  isDrag = false;                     // CLEAR our mouse-dragging flag, and
+  // accumulate any final bit of mouse-dragging we did:
+  xMdragTot += (x - xMclik);
+  yMdragTot += (y - yMclik);
+  console.log('myMouseUp: xMdragTot,yMdragTot =',xMdragTot,',\t',yMdragTot);
+};
+
+
+
